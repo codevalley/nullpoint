@@ -155,10 +155,14 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.4rem 1rem;
+      max-width: 82ch;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0.5rem 1.2rem;
       font-size: 0.78rem;
-      color: var(--muted);
+      color: var(--text);
       border-top: 1px solid var(--border);
+      background: color-mix(in srgb, var(--border) 25%, transparent);
     }
 
     .theme-btn {
@@ -212,25 +216,25 @@
 
       <div class="commands">
         <div class="cmd-line">
-          <span class="cmd">route</span>
+          <span class="cmd">/route</span>
           <a href="https://maps.google.com/?q=Lakeshore+Homes+Eastwood+Township+Haralur+Bengaluru+560035" target="_blank" rel="noopener" class="param">--gmaps</a>
           <a href="https://maps.apple.com/?q=Lakeshore+Homes+Eastwood+Township+Haralur+Bengaluru+560035" target="_blank" rel="noopener" class="param">--applemaps</a>
           <a href="https://www.openstreetmap.org/search?query=Lakeshore%20Homes%20Eastwood%20Township%20Haralur%20Bengaluru%20560035" target="_blank" rel="noopener" class="param">--osm</a>
         </div>
         <div class="cmd-line">
-          <span class="cmd">wifi</span>
+          <span class="cmd">/wifi</span>
           <span class="param">--resolve</span>
         </div>
         <div class="cmd-line">
-          <span class="cmd">parking</span>
+          <span class="cmd">/parking</span>
           <span class="param">--resolve</span>
         </div>
         <div class="cmd-line">
-          <span class="cmd">manual</span>
+          <span class="cmd">/manual</span>
           <span class="param">--resolve</span>
         </div>
         <div class="cmd-line">
-          <span class="cmd">contacts</span>
+          <span class="cmd">/contacts</span>
           <span class="param">--resolve</span>
         </div>
       </div>
