@@ -1,1 +1,284 @@
-<!DOCTYPE html>...</content>
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nullpoint*</title>
+  <meta name="description" content="nullpoint — home portal">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 5 5'%3E%3Crect width='5' height='5' fill='%230d1117'/%3E%3Crect x='2' y='0' width='1' height='1' fill='%23e6edf3'/%3E%3Crect x='0' y='1' width='1' height='1' fill='%23e6edf3'/%3E%3Crect x='2' y='1' width='1' height='1' fill='%23e6edf3'/%3E%3Crect x='4' y='1' width='1' height='1' fill='%23e6edf3'/%3E%3Crect x='1' y='2' width='3' height='1' fill='%23e6edf3'/%3E%3Crect x='0' y='3' width='1' height='1' fill='%23e6edf3'/%3E%3Crect x='2' y='3' width='1' height='1' fill='%23e6edf3'/%3E%3Crect x='4' y='3' width='1' height='1' fill='%23e6edf3'/%3E%3Crect x='2' y='4' width='1' height='1' fill='%23e6edf3'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=PT+Mono&display=swap" rel="stylesheet">
+  <script>
+    (function(){var t;try{t=localStorage.getItem('np-theme')}catch(e){}if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t)}else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:light)').matches){document.documentElement.setAttribute('data-theme','light')}})();
+  </script>
+  <style>
+    :root, [data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #0d1117;
+      --text: #c9d1d9;
+      --dim: #6e7681;
+      --bright: #e6edf3;
+      --accent: #d29922;
+      --link: #58a6ff;
+      --ok: #7ee787;
+      --border: #30363d;
+      --muted: #484f58;
+    }
+
+    [data-theme="light"] {
+      color-scheme: light;
+      --bg: #f6f8fa;
+      --text: #24292f;
+      --dim: #6e7781;
+      --bright: #1f2328;
+      --accent: #9a6700;
+      --link: #0969da;
+      --ok: #1a7f37;
+      --border: #d0d7de;
+      --muted: #8c959f;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "PT Mono", "Courier New", monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .terminal {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+    }
+
+    .content {
+      max-width: 68ch;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .logo {
+      width: fit-content;
+      margin: 0 auto;
+      font-family: "IBM Plex Mono", "Courier New", monospace;
+      font-size: clamp(0.32rem, 0.88vw, 0.78rem);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    .logo .dim { color: var(--dim); }
+    .logo .bright { color: var(--bright); }
+    .logo .star { color: var(--accent); }
+
+    .location {
+      border: 1px solid var(--border);
+      padding: 0.6rem 1rem;
+      position: relative;
+      font-size: 0.85rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .loc-label {
+      position: absolute;
+      top: -0.6em;
+      left: 0.75rem;
+      background: var(--bg);
+      padding: 0 0.4rem;
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    .loc-text { color: var(--text); }
+
+    .copy-btn {
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: inherit;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 0;
+      white-space: nowrap;
+    }
+    .copy-btn:hover { color: var(--accent); }
+    .copy-btn.ok { color: var(--ok); }
+
+    .commands {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      font-size: 0.88rem;
+    }
+
+    .cmd-line {
+      display: flex;
+      gap: 0.75rem;
+      align-items: baseline;
+    }
+
+    .cmd {
+      color: var(--accent);
+      min-width: 10ch;
+      flex-shrink: 0;
+    }
+
+    .param { color: var(--dim); }
+    a.param {
+      color: var(--link);
+      text-decoration: none;
+    }
+    a.param:hover { text-decoration: underline; }
+
+    .prompt { color: var(--dim); }
+    .prompt .gt { color: var(--ok); }
+    .cursor {
+      color: var(--text);
+      animation: blink 1s step-end infinite;
+    }
+
+    .statusbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.4rem 1rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+
+    .theme-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.1rem 0.5rem;
+      font-family: inherit;
+      font-size: 0.75rem;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .theme-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    @media (max-width: 600px) {
+      .terminal { padding: 1.5rem 1rem; }
+      .logo { font-size: clamp(0.26rem, 1.5vw, 0.5rem); }
+      .commands { font-size: 0.82rem; }
+      .cmd { min-width: 9ch; }
+      .location { flex-wrap: wrap; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="terminal">
+    <div class="content">
+<pre class="logo" aria-label="nullpoint"><span class="dim">                      ░██ ░██ </span><span class="bright">                      ░██              ░██    </span>
+<span class="dim">                      ░██ ░██ </span><span class="bright">                                       ░██    </span>
+<span class="dim">░████████  ░██    ░██ ░██ ░██ </span><span class="bright">░████████   ░███████  ░██░████████  ░████████ </span><span class="star">     ░██    </span>
+<span class="dim">░██    ░██ ░██    ░██ ░██ ░██ </span><span class="bright">░██    ░██ ░██    ░██ ░██░██    ░██    ░██    </span><span class="star">  ░██░██░██ </span>
+<span class="dim">░██    ░██ ░██    ░██ ░██ ░██ </span><span class="bright">░██    ░██ ░██    ░██ ░██░██    ░██    ░██    </span><span class="star">   ░██████  </span>
+<span class="dim">░██    ░██ ░██   ░███ ░██ ░██ </span><span class="bright">░███   ░██ ░██    ░██ ░██░██    ░██    ░██    </span><span class="star">  ░██░██░██ </span>
+<span class="dim">░██    ░██  ░█████░██ ░██ ░██ </span><span class="bright">░██░█████   ░███████  ░██░██    ░██     ░████ </span><span class="star">     ░██    </span>
+<span class="dim">                              </span><span class="bright">░██                                           </span>
+<span class="dim">                              </span><span class="bright">░██                                           </span></pre>
+
+      <div class="location">
+        <span class="loc-label">location</span>
+        <span class="loc-text">#185, Lakeshore Homes · Eastwood Township, Haralur · Bengaluru 560035</span>
+        <button class="copy-btn" id="copyBtn">cp --clip</button>
+      </div>
+
+      <div class="commands">
+        <div class="cmd-line">
+          <span class="cmd">route</span>
+          <a href="https://maps.google.com/?q=Lakeshore+Homes+Eastwood+Township+Haralur+Bengaluru+560035" target="_blank" rel="noopener" class="param">--gmaps</a>
+          <a href="https://maps.apple.com/?q=Lakeshore+Homes+Eastwood+Township+Haralur+Bengaluru+560035" target="_blank" rel="noopener" class="param">--applemaps</a>
+          <a href="https://www.openstreetmap.org/search?query=Lakeshore%20Homes%20Eastwood%20Township%20Haralur%20Bengaluru%20560035" target="_blank" rel="noopener" class="param">--osm</a>
+        </div>
+        <div class="cmd-line">
+          <span class="cmd">wifi</span>
+          <span class="param">--resolve</span>
+        </div>
+        <div class="cmd-line">
+          <span class="cmd">parking</span>
+          <span class="param">--resolve</span>
+        </div>
+        <div class="cmd-line">
+          <span class="cmd">manual</span>
+          <span class="param">--resolve</span>
+        </div>
+        <div class="cmd-line">
+          <span class="cmd">contacts</span>
+          <span class="param">--resolve</span>
+        </div>
+      </div>
+
+      <div class="prompt">
+        <span class="gt">&gt;</span> <span class="cursor">█</span>
+      </div>
+    </div>
+  </div>
+
+  <footer class="statusbar">
+    <span>nullpoint v2026.02 ~/home</span>
+    <button class="theme-btn" id="themeToggle">t · <span id="themeLabel">dark</span></button>
+  </footer>
+
+  <script>
+    (function() {
+      var html = document.documentElement;
+      var label = document.getElementById('themeLabel');
+
+      function setTheme(t) {
+        html.setAttribute('data-theme', t);
+        label.textContent = t;
+        try { localStorage.setItem('np-theme', t); } catch(e) {}
+      }
+
+      label.textContent = html.getAttribute('data-theme') || 'dark';
+
+      document.getElementById('themeToggle').addEventListener('click', function() {
+        setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 't' && !e.ctrlKey && !e.metaKey && !e.altKey &&
+            !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) {
+          setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        }
+      });
+
+      document.getElementById('copyBtn').addEventListener('click', function() {
+        var btn = this;
+        navigator.clipboard.writeText('#185, Lakeshore Homes, Eastwood Township, Haralur, Bengaluru 560035').then(function() {
+          btn.textContent = '\u2713 copied';
+          btn.classList.add('ok');
+          setTimeout(function() { btn.textContent = 'cp --clip'; btn.classList.remove('ok'); }, 2000);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
