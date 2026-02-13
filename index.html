@@ -87,11 +87,12 @@
       font-size: clamp(0.32rem, 0.88vw, 0.78rem);
       line-height: 1.18;
       letter-spacing: 0;
+      cursor: pointer;
     }
 
     .logo .dim { color: var(--dim); }
     .logo .bright { color: var(--bright); }
-    .logo .star { color: var(--accent); }
+    .logo .star { color: var(--accent); cursor: pointer; }
 
     .location {
       border: 1px solid var(--border);
@@ -156,11 +157,19 @@
     }
     a.param:hover { text-decoration: underline; }
 
-    .prompt { color: var(--dim); }
+    .prompt { color: var(--dim); cursor: text; }
     .prompt .gt { color: var(--ok); }
+    #cmdDisplay { color: var(--text); }
     .cursor {
       color: var(--text);
       animation: blink 1s step-end infinite;
+    }
+    .cmd-input {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
     }
 
     .statusbar {
@@ -251,8 +260,9 @@
         </div>
       </div>
 
-      <div class="prompt">
-        <span class="gt">&gt;</span> <span class="cursor">█</span>
+      <div class="prompt" id="prompt">
+        <span class="gt">&gt;</span> <span id="cmdDisplay"></span><span class="cursor">█</span>
+        <input type="text" id="cmdInput" class="cmd-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
       </div>
     </div>
   </div>
@@ -267,25 +277,131 @@
       var html = document.documentElement;
       var label = document.getElementById('themeLabel');
 
+      // --- Theme ---
       function setTheme(t) {
         html.setAttribute('data-theme', t);
         label.textContent = t;
         try { localStorage.setItem('np-theme', t); } catch(e) {}
       }
-
-      label.textContent = html.getAttribute('data-theme') || 'dark';
-
-      document.getElementById('themeToggle').addEventListener('click', function() {
+      function toggleTheme() {
         setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+      }
+      label.textContent = html.getAttribute('data-theme') || 'dark';
+      document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+      // Logo click → toggle theme (except star area)
+      document.querySelector('.logo').addEventListener('click', function(e) {
+        if (e.target.classList.contains('star')) return;
+        toggleTheme();
       });
 
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 't' && !e.ctrlKey && !e.metaKey && !e.altKey &&
-            !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) {
-          setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+      // --- Star rotation ---
+      var starSpans = document.querySelectorAll('.logo .star');
+      var starPlus = ['     \u2591\u2588\u2588    ', '  \u2591\u2588\u2588\u2591\u2588\u2588\u2591\u2588\u2588 ', '   \u2591\u2588\u2588\u2588\u2588\u2588\u2588  ', '  \u2591\u2588\u2588\u2591\u2588\u2588\u2591\u2588\u2588 ', '     \u2591\u2588\u2588    '];
+      var starX =    ['  \u2591\u2588\u2588   \u2591\u2588\u2588 ', '   \u2591\u2588\u2588 \u2591\u2588\u2588  ', '     \u2591\u2588\u2588    ', '   \u2591\u2588\u2588 \u2591\u2588\u2588  ', '  \u2591\u2588\u2588   \u2591\u2588\u2588 '];
+      var starBusy = false;
+
+      function animateStar() {
+        if (starBusy) return;
+        starBusy = true;
+        var seq = [starX, starPlus, starX, starPlus];
+        var i = 0;
+        var iv = setInterval(function() {
+          if (i >= seq.length) { clearInterval(iv); starBusy = false; return; }
+          for (var j = 0; j < starSpans.length; j++) starSpans[j].textContent = seq[i][j];
+          i++;
+        }, 120);
+      }
+
+      starSpans.forEach(function(s) {
+        s.addEventListener('click', function(e) { e.stopPropagation(); animateStar(); });
+      });
+
+      // --- Interactive prompt ---
+      var cmdInput = document.getElementById('cmdInput');
+      var cmdDisplay = document.getElementById('cmdDisplay');
+      var prompt = document.getElementById('prompt');
+
+      var addr = 'Lakeshore+Homes+Eastwood+Township+Haralur+Bengaluru+560035';
+      var routes = {
+        route: {
+          '': 'https://maps.google.com/?q=' + addr,
+          'gmaps': 'https://maps.google.com/?q=' + addr,
+          'applemaps': 'https://maps.apple.com/?q=' + addr,
+          'osm': 'https://www.openstreetmap.org/search?query=' + addr.replace(/\+/g, '%20')
+        }
+      };
+
+      prompt.addEventListener('click', function() { cmdInput.focus(); });
+
+      cmdInput.addEventListener('input', function() {
+        cmdDisplay.textContent = cmdInput.value;
+      });
+
+      cmdInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          executeCommand(cmdInput.value.trim());
+        } else if (e.key === 'Escape') {
+          cmdInput.value = '';
+          cmdDisplay.textContent = '';
+          cmdInput.blur();
         }
       });
 
+      function executeCommand(raw) {
+        if (!raw) return;
+        var cmd = raw.replace(/^\//, '');
+        var parts = cmd.split(/\s+/);
+        var command = parts[0].toLowerCase();
+        var param = (parts[1] || '').replace(/^--/, '').toLowerCase();
+
+        if (command === 'theme') { toggleTheme(); clearPrompt(); return; }
+        if (command === 'dark') { setTheme('dark'); clearPrompt(); return; }
+        if (command === 'light') { setTheme('light'); clearPrompt(); return; }
+
+        if (routes[command]) {
+          var target = routes[command][param] || routes[command][''];
+          if (target) { window.location.href = target; return; }
+        }
+
+        if (['wifi','parking','manual','contacts'].indexOf(command) !== -1) {
+          showMsg('/' + command + ' \u2192 --resolve'); return;
+        }
+
+        showMsg(raw + ': command not found');
+      }
+
+      function clearPrompt() {
+        cmdInput.value = '';
+        cmdDisplay.textContent = '';
+        cmdInput.blur();
+      }
+
+      function showMsg(msg) {
+        cmdInput.value = '';
+        cmdDisplay.textContent = msg;
+        cmdDisplay.style.color = 'var(--dim)';
+        setTimeout(function() {
+          cmdDisplay.textContent = '';
+          cmdDisplay.style.color = '';
+        }, 2000);
+      }
+
+      // --- Global keys ---
+      document.addEventListener('keydown', function(e) {
+        if (['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) return;
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
+        if (e.key === 't') {
+          toggleTheme();
+        } else if (e.key === '/') {
+          e.preventDefault();
+          cmdInput.value = '/';
+          cmdDisplay.textContent = '/';
+          cmdInput.focus();
+        }
+      });
+
+      // --- Copy button ---
       document.getElementById('copyBtn').addEventListener('click', function() {
         var btn = this;
         navigator.clipboard.writeText('#185, Lakeshore Homes, Eastwood Township, Haralur, Bengaluru 560035').then(function() {
