@@ -159,12 +159,12 @@
 
     .motd {
       font-size: 0.82rem;
-      padding: 0.4rem 0.8rem;
-      border-left: 2px solid var(--accent);
-      color: var(--dim);
+      font-weight: 700;
+      padding: 0.45rem 0.8rem;
+      border: 1px solid var(--border);
+      color: var(--bright);
     }
-    .motd .motd-tag { color: var(--accent); }
-    .motd .motd-val { color: var(--text); }
+    .motd .motd-gt { color: var(--ok); }
 
     .prompt { color: var(--dim); cursor: text; }
     .prompt .gt { color: var(--ok); }
@@ -297,10 +297,6 @@
         <button class="copy-btn" id="copyBtn">cp --clip</button>
       </div>
 
-      <div class="motd">
-        <span class="motd-tag">event.emit</span>(<span class="motd-val">'housewarming'</span>, { date: <span class="motd-val">'Sun 15 Feb'</span>, time: <span class="motd-val">'12:00+'</span> }) <span class="motd-tag">// all threads welcome</span>
-      </div>
-
       <div class="commands">
         <div class="cmd-line">
           <span class="cmd">/route</span>
@@ -332,6 +328,8 @@
       </div>
 
       <div id="output" class="output" style="display:none"></div>
+
+      <div class="motd"><span class="motd-gt">&gt;</span> Update: Bootstrap event scheduled for Sunday, Feb 15, 12:00+</div>
     </div>
   </div>
 
