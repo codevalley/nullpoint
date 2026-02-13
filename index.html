@@ -157,6 +157,15 @@
     }
     a.param:hover { text-decoration: underline; }
 
+    .motd {
+      font-size: 0.82rem;
+      padding: 0.4rem 0.8rem;
+      border-left: 2px solid var(--accent);
+      color: var(--dim);
+    }
+    .motd .motd-tag { color: var(--accent); }
+    .motd .motd-val { color: var(--text); }
+
     .prompt { color: var(--dim); cursor: text; }
     .prompt .gt { color: var(--ok); }
     #cmdDisplay { color: var(--text); }
@@ -286,6 +295,10 @@
         <span class="loc-label">location</span>
         <span class="loc-text">#185, Lakeshore Homes · Eastwood Township, Haralur · Bengaluru 560035</span>
         <button class="copy-btn" id="copyBtn">cp --clip</button>
+      </div>
+
+      <div class="motd">
+        <span class="motd-tag">event.emit</span>(<span class="motd-val">'housewarming'</span>, { date: <span class="motd-val">'Sun 15 Feb'</span>, time: <span class="motd-val">'12:00+'</span> }) <span class="motd-tag">// all threads welcome</span>
       </div>
 
       <div class="commands">
