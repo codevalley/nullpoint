@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=PT+Mono&display=swap" rel="stylesheet">
   <script>
-    (function(){var a='Lakeshore+Homes+Eastwood+Township+Haralur+Bengaluru+560035',r={route:{'':'https://maps.google.com/?q='+a,gmaps:'https://maps.google.com/?q='+a,applemaps:'https://maps.apple.com/?q='+a,osm:'https://www.openstreetmap.org/search?query='+a.replace(/\+/g,'%20')}},p=location.pathname.replace(/^\/|\/$/g,''),q=location.search.slice(1);if(r[p]){var u=r[p][q]||r[p][''];if(u){location.replace(u);return}}})();
+    (function(){var a='Lakeshore+Homes+Eastwood+Township+Haralur+Bengaluru+560035',r={route:{'':'https://maps.google.com/?q='+a,gmaps:'https://maps.google.com/?q='+a,applemaps:'https://maps.apple.com/?q='+a,osm:'https://www.openstreetmap.org/search?query='+a.replace(/\+/g,'%20')},contacts:{'':'/#contacts'}},p=location.pathname.replace(/^\/|\/$/g,''),q=location.search.slice(1);if(r[p]){var u=r[p][q]||r[p][''];if(u){location.replace(u);return}}})();
   </script>
   <script>
     (function(){var t;try{t=localStorage.getItem('np-theme')}catch(e){}if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t)}else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:light)').matches){document.documentElement.setAttribute('data-theme','light')}})();
@@ -172,6 +172,59 @@
       opacity: 0;
     }
 
+    .output {
+      border: 1px solid var(--border);
+      padding: 0.8rem 1rem;
+      font-size: 0.85rem;
+      position: relative;
+      animation: fadeIn 0.15s ease;
+    }
+    .output-header {
+      color: var(--dim);
+      margin-bottom: 0.5rem;
+      font-size: 0.78rem;
+    }
+    .output-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: baseline;
+      padding: 0.1rem 0;
+    }
+    .output-name {
+      color: var(--bright);
+      min-width: 12ch;
+    }
+    .output-link {
+      color: var(--link);
+      text-decoration: none;
+    }
+    .output-link:hover { text-decoration: underline; }
+    .output-sep { color: var(--muted); }
+    .redacted { color: var(--muted); }
+    .output-note {
+      color: var(--dim);
+      margin-top: 0.35rem;
+      font-size: 0.78rem;
+    }
+    .output-close {
+      position: absolute;
+      top: 0.3rem;
+      right: 0.6rem;
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.72rem;
+      padding: 0.2rem 0.4rem;
+    }
+    .output-close:hover { color: var(--accent); }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .statusbar {
       display: flex;
       justify-content: space-between;
@@ -256,7 +309,7 @@
         </div>
         <div class="cmd-line">
           <span class="cmd">/contacts</span>
-          <span class="param">--resolve</span>
+          <span class="param">--cat</span>
         </div>
       </div>
 
@@ -264,6 +317,8 @@
         <span class="gt">&gt;</span> <span id="cmdDisplay"></span><span class="cursor">█</span>
         <input type="text" id="cmdInput" class="cmd-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
       </div>
+
+      <div id="output" class="output" style="display:none"></div>
     </div>
   </div>
 
@@ -364,7 +419,9 @@
           if (target) { window.location.href = target; return; }
         }
 
-        if (['wifi','parking','manual','contacts'].indexOf(command) !== -1) {
+        if (command === 'contacts') { showContacts(); return; }
+
+        if (['wifi','parking','manual'].indexOf(command) !== -1) {
           showMsg('/' + command + ' \u2192 --resolve'); return;
         }
 
@@ -387,8 +444,65 @@
         }, 2000);
       }
 
+      // --- Contacts ---
+      var output = document.getElementById('output');
+
+      function el(tag, cls, text) {
+        var e = document.createElement(tag);
+        if (cls) e.className = cls;
+        if (text) e.textContent = text;
+        return e;
+      }
+      function link(href, text, cls) {
+        var a = document.createElement('a');
+        a.href = href;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.className = cls || 'output-link';
+        a.textContent = text;
+        return a;
+      }
+
+      function showContacts() {
+        clearPrompt();
+        output.textContent = '';
+
+        var close = el('button', 'output-close', 'esc');
+        close.addEventListener('click', hideOutput);
+        output.appendChild(close);
+
+        output.appendChild(el('div', 'output-header', '$ cat /etc/handles'));
+
+        var r1 = el('div', 'output-row');
+        r1.appendChild(el('span', 'output-name', 'Narayan'));
+        r1.appendChild(link('https://x.com/nyn', '@nyn'));
+        r1.appendChild(el('span', 'output-sep', '\u00b7'));
+        r1.appendChild(link('https://linkedin.com/in/nyn', 'nyn'));
+        output.appendChild(r1);
+
+        var r2 = el('div', 'output-row');
+        r2.appendChild(el('span', 'output-name', 'Anusha'));
+        r2.appendChild(link('https://x.com/vennindoubt', '@vennindoubt'));
+        r2.appendChild(el('span', 'output-sep', '\u00b7'));
+        r2.appendChild(link('https://www.linkedin.com/in/anushajayanti/', 'Anush'));
+        output.appendChild(r2);
+
+        output.appendChild(el('div', 'output-row')).appendChild(el('span', 'redacted', 'Ra\u2591\u2588\u2591\u2588\u2591\u2588'));
+        output.appendChild(el('div', 'output-row')).appendChild(el('span', 'redacted', 'An\u2588\u2591\u2588\u2591\u2588\u2591\u2588'));
+        output.appendChild(el('div', 'output-note', '* more info redacted ( \u2591\u2588 )'));
+
+        output.style.display = '';
+      }
+
+      function hideOutput() {
+        output.style.display = 'none';
+        output.textContent = '';
+        if (location.hash === '#contacts') history.replaceState(null, '', location.pathname);
+      }
+
       // --- Global keys ---
       document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') { hideOutput(); cmdInput.blur(); return; }
         if (['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) return;
         if (e.ctrlKey || e.metaKey || e.altKey) return;
         if (e.key === 't') {
@@ -400,6 +514,9 @@
           cmdInput.focus();
         }
       });
+
+      // Auto-show from URL
+      if (location.hash === '#contacts') showContacts();
 
       // --- Copy button ---
       document.getElementById('copyBtn').addEventListener('click', function() {
