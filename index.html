@@ -158,13 +158,15 @@
     a.param:hover { text-decoration: underline; }
 
     .motd {
+      font-family: "IBM Plex Mono", monospace;
       font-size: 0.82rem;
       font-weight: 700;
-      padding: 0.45rem 0.8rem;
-      border: 1px solid var(--border);
       color: var(--bright);
+      margin-top: -0.7rem;
     }
-    .motd .motd-gt { color: var(--ok); }
+    .motd-label { display: inline; }
+    .motd .motd-date { color: var(--accent); }
+    .motd .motd-spin { color: var(--accent); display: inline-block; width: 1ch; }
 
     .prompt { color: var(--dim); cursor: text; }
     .prompt .gt { color: var(--ok); }
@@ -297,6 +299,8 @@
         <button class="copy-btn" id="copyBtn">cp --clip</button>
       </div>
 
+      <div class="motd">🏡 <span class="motd-label" id="motdLabel">system onboarding scheduled</span> — <span class="motd-spin motd-spin-l">*</span> <span class="motd-date">Sunday, Feb 15 · 12:00 onwards</span> <span class="motd-spin motd-spin-r">*</span></div>
+
       <div class="commands">
         <div class="cmd-line">
           <span class="cmd">/route</span>
@@ -328,8 +332,6 @@
       </div>
 
       <div id="output" class="output" style="display:none"></div>
-
-      <div class="motd"><span class="motd-gt">&gt;</span> Update: Bootstrap event scheduled for Sunday, Feb 15, 12:00+</div>
     </div>
   </div>
 
@@ -528,6 +530,27 @@
 
       // Auto-show from URL
       if (location.hash === '#contacts') showContacts();
+
+      // --- MOTD random phrase (per page load) ---
+      var motdPhrases = [
+        'system onboarding scheduled',
+        'closed beta launch',
+        'first boot celebration',
+        'production deploy party',
+        'initial handshake event',
+        'platform demo day'
+      ];
+      var motdLabel = document.getElementById('motdLabel');
+      motdLabel.textContent = motdPhrases[Math.floor(Math.random() * motdPhrases.length)];
+
+      // --- MOTD spinner ---
+      var spinFrames = ['*', '\u00b7', '+', '\u00b7'];
+      var spinEls = document.querySelectorAll('.motd-spin');
+      var spinIdx = 0;
+      setInterval(function() {
+        spinIdx = (spinIdx + 1) % spinFrames.length;
+        spinEls.forEach(function(el) { el.textContent = spinFrames[spinIdx]; });
+      }, 250);
 
       // --- Copy button ---
       document.getElementById('copyBtn').addEventListener('click', function() {
