@@ -164,9 +164,7 @@
       color: var(--bright);
       margin-top: -0.7rem;
     }
-    .motd-label { display: inline; }
     .motd .motd-date { color: var(--accent); }
-    .motd .motd-spin { color: var(--accent); display: inline-block; width: 1ch; }
 
     .prompt { color: var(--dim); cursor: text; position: relative; }
     .prompt .gt { color: var(--ok); }
@@ -307,7 +305,7 @@
         <button class="copy-btn" id="copyBtn">cp --clip</button>
       </div>
 
-      <div class="motd">🏡 <span class="motd-label" id="motdLabel">system onboarding scheduled</span> — <span class="motd-spin motd-spin-l">*</span> <span class="motd-date">Sunday, Feb 15 · 12:00 onwards</span> <span class="motd-spin motd-spin-r">*</span></div>
+      <div class="motd">🏡 <span id="motdLabel"></span> — uptime: <span class="motd-date" id="motdUptime"></span></div>
 
       <div class="commands">
         <div class="cmd-line">
@@ -539,26 +537,38 @@
       // Auto-show from URL
       if (location.hash === '#contacts') showContacts();
 
-      // --- MOTD random phrase (per page load) ---
+      // --- MOTD ---
       var motdPhrases = [
-        'system onboarding scheduled',
-        'closed beta launch',
-        'first boot celebration',
-        'production deploy party',
-        'initial handshake event',
-        'platform demo day'
+        'v1.0 deployed successfully',
+        'all systems operational',
+        'boot sequence complete',
+        'build passing, zero warnings',
+        'init process nominal',
+        'all tests green',
+        'connection established',
+        'handshake complete',
+        'sync successful',
+        'daemon started, pid 1',
+        'kernel loaded, ready',
+        'runtime: stable',
+        'welcome to userspace',
+        'mounting /home complete',
+        'ready, accepting connections'
       ];
-      var motdLabel = document.getElementById('motdLabel');
-      motdLabel.textContent = motdPhrases[Math.floor(Math.random() * motdPhrases.length)];
+      document.getElementById('motdLabel').textContent =
+        motdPhrases[Math.floor(Math.random() * motdPhrases.length)];
 
-      // --- MOTD spinner ---
-      var spinFrames = ['*', '\u00b7', '+', '\u00b7'];
-      var spinEls = document.querySelectorAll('.motd-spin');
-      var spinIdx = 0;
-      setInterval(function() {
-        spinIdx = (spinIdx + 1) % spinFrames.length;
-        spinEls.forEach(function(el) { el.textContent = spinFrames[spinIdx]; });
-      }, 250);
+      var deployTime = new Date('2026-02-15T12:00:00+05:30').getTime();
+      var uptimeEl = document.getElementById('motdUptime');
+      function updateUptime() {
+        var diff = Date.now() - deployTime;
+        var d = Math.floor(diff / 86400000);
+        var h = Math.floor((diff % 86400000) / 3600000);
+        var m = Math.floor((diff % 3600000) / 60000);
+        uptimeEl.textContent = (d > 0 ? d + 'd ' : '') + h + 'h ' + m + 'm';
+      }
+      updateUptime();
+      setInterval(updateUptime, 60000);
 
       // --- Copy button ---
       document.getElementById('copyBtn').addEventListener('click', function() {
