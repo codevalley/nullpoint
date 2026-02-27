@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=PT+Mono&display=swap" rel="stylesheet">
   <script>
-    (function(){var a='Lakeshore+Homes+Eastwood+Township+Haralur+Bengaluru+560035',r={route:{'':'https://maps.google.com/?q='+a,gmaps:'https://maps.google.com/?q='+a,applemaps:'https://maps.apple.com/?q='+a,osm:'https://www.openstreetmap.org/search?query='+a.replace(/\+/g,'%20')},contacts:{'':'/#contacts'}},p=location.pathname.replace(/^\/|\/$/g,''),q=location.search.slice(1);if(r[p]){var u=r[p][q]||r[p][''];if(u){location.replace(u);return}}})();
+    (function(){var a='12.903778,77.673333',s='near+186%2C+1st+B+Main+Rd%2C+Eastwood+Twp%2C+Bengaluru%2C+Kasavanahalli%2C+Karnataka+560035%2C+India',g='https://maps.google.com/?q='+a+'+('+s+')',r={route:{'':g,gmaps:g,applemaps:'https://maps.apple.com/?ll='+a+'&q='+s,osm:'https://www.openstreetmap.org/?mlat=12.903778&mlon=77.673333#map=19/12.903778/77.673333'},contacts:{'':'/#contacts'}},p=location.pathname.replace(/^\/|\/$/g,''),q=location.search.slice(1);if(r[p]){var u=r[p][q]||r[p][''];if(u){location.replace(u);return}}})();
   </script>
   <script>
     (function(){var t;try{t=localStorage.getItem('np-theme')}catch(e){}if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t)}else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:light)').matches){document.documentElement.setAttribute('data-theme','light')}})();
@@ -301,7 +301,7 @@
 
       <div class="location">
         <span class="loc-label">location</span>
-        <span class="loc-text">#185, Lakeshore Homes · Eastwood Township, Haralur · Bengaluru 560035</span>
+        <span class="loc-text">12°54'13.6&quot;N 77°40'24.0&quot;E · near 186, 1st B Main Rd, Eastwood Twp, Kasavanahalli, Bengaluru 560035</span>
         <button class="copy-btn" id="copyBtn">cp --clip</button>
       </div>
 
@@ -310,9 +310,9 @@
       <div class="commands">
         <div class="cmd-line">
           <span class="cmd">/route</span>
-          <a href="https://maps.google.com/?q=Lakeshore+Homes+Eastwood+Township+Haralur+Bengaluru+560035" target="_blank" rel="noopener" class="param">--gmaps</a>
-          <a href="https://maps.apple.com/?q=Lakeshore+Homes+Eastwood+Township+Haralur+Bengaluru+560035" target="_blank" rel="noopener" class="param">--applemaps</a>
-          <a href="https://www.openstreetmap.org/search?query=Lakeshore%20Homes%20Eastwood%20Township%20Haralur%20Bengaluru%20560035" target="_blank" rel="noopener" class="param">--osm</a>
+          <a href="https://maps.google.com/?q=12.903778,77.673333+(near+186%2C+1st+B+Main+Rd%2C+Eastwood+Twp%2C+Bengaluru%2C+Kasavanahalli%2C+Karnataka+560035%2C+India)" target="_blank" rel="noopener" class="param">--gmaps</a>
+          <a href="https://maps.apple.com/?ll=12.903778,77.673333&q=near+186%2C+1st+B+Main+Rd%2C+Eastwood+Twp%2C+Bengaluru%2C+Kasavanahalli%2C+Karnataka+560035%2C+India" target="_blank" rel="noopener" class="param">--applemaps</a>
+          <a href="https://www.openstreetmap.org/?mlat=12.903778&mlon=77.673333#map=19/12.903778/77.673333" target="_blank" rel="noopener" class="param">--osm</a>
         </div>
         <div class="cmd-line">
           <span class="cmd">/wifi</span>
@@ -396,13 +396,15 @@
       var cmdDisplay = document.getElementById('cmdDisplay');
       var prompt = document.getElementById('prompt');
 
-      var addr = 'Lakeshore+Homes+Eastwood+Township+Haralur+Bengaluru+560035';
+      var latlon = '12.903778,77.673333';
+      var addr = 'near+186%2C+1st+B+Main+Rd%2C+Eastwood+Twp%2C+Bengaluru%2C+Kasavanahalli%2C+Karnataka+560035%2C+India';
+      var gmapsPin = 'https://maps.google.com/?q=' + latlon + '+(' + addr + ')';
       var routes = {
         route: {
-          '': 'https://maps.google.com/?q=' + addr,
-          'gmaps': 'https://maps.google.com/?q=' + addr,
-          'applemaps': 'https://maps.apple.com/?q=' + addr,
-          'osm': 'https://www.openstreetmap.org/search?query=' + addr.replace(/\+/g, '%20')
+          '': gmapsPin,
+          'gmaps': gmapsPin,
+          'applemaps': 'https://maps.apple.com/?ll=' + latlon + '&q=' + addr,
+          'osm': 'https://www.openstreetmap.org/?mlat=12.903778&mlon=77.673333#map=19/12.903778/77.673333'
         }
       };
 
@@ -573,7 +575,7 @@
       // --- Copy button ---
       document.getElementById('copyBtn').addEventListener('click', function() {
         var btn = this;
-        navigator.clipboard.writeText('#185, Lakeshore Homes, Eastwood Township, Haralur, Bengaluru 560035').then(function() {
+        navigator.clipboard.writeText('185, 1st B Main Rd, Eastwood Twp, Bengaluru, Kasavanahalli, Karnataka 560035, India').then(function() {
           btn.textContent = '\u2713 copied';
           btn.classList.add('ok');
           setTimeout(function() { btn.textContent = 'cp --clip'; btn.classList.remove('ok'); }, 2000);
